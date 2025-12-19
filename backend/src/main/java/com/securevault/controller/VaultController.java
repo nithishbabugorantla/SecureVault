@@ -5,6 +5,7 @@ import com.securevault.dto.DecryptedPasswordResponse;
 import com.securevault.dto.PasswordEntryResponse;
 import com.securevault.dto.ShowPasswordRequest;
 import com.securevault.service.VaultService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/vault")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = {"http://localhost:3000", "${cors.allowed-origins:}"})
 public class VaultController {
     
     @Autowired
@@ -43,12 +44,12 @@ public class VaultController {
     @PostMapping("/add")
     public ResponseEntity<?> addPassword(
             @RequestAttribute("userId") Long userId,
-            @RequestBody AddPasswordRequest request) {
+            @Valid @RequestBody AddPasswordRequest request) {
         try {
             PasswordEntryResponse response = vaultService.addPassword(userId, request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("Failed to add password");
         }
     }
     
@@ -61,13 +62,13 @@ public class VaultController {
     public ResponseEntity<?> showPassword(
             @RequestAttribute("userId") Long userId,
             @PathVariable Long id,
-            @RequestBody ShowPasswordRequest request) {
+            @Valid @RequestBody ShowPasswordRequest request) {
         try {
             DecryptedPasswordResponse response = vaultService.showPassword(
                     userId, id, request.getMasterPassword());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("Failed to decrypt password");
         }
     }
     
@@ -83,7 +84,7 @@ public class VaultController {
             vaultService.deletePassword(userId, id);
             return ResponseEntity.ok("Password deleted successfully");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("Failed to delete password");
         }
     }
 }

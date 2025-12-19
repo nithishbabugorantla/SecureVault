@@ -28,7 +28,8 @@ public class AuthService {
     @Autowired
     private JwtService jwtService;
     
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
     
     /**
      * Registers a new user
@@ -37,7 +38,7 @@ public class AuthService {
     public AuthResponse register(RegisterRequest request) {
         // Check if username already exists
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username already exists");
+            throw new RuntimeException("Registration failed");
         }
         
         // Hash login password with BCrypt

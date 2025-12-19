@@ -15,7 +15,7 @@ function ShowPasswordModal({ isOpen, onClose, onSubmit, decryptedPassword }) {
       }, 30000);
       return () => clearTimeout(timer);
     }
-  }, [decryptedPassword, onClose]);
+  }, [decryptedPassword]); // onClose is stable, no need in deps
 
   const handleSubmit = async (e) => {
     e.preventDefault();
