@@ -4,21 +4,33 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.security.Key;
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * JwtService - Handles JWT token generation and validation
+ * 
+ * SECURITY NOTE: In production, use a strong secret key from environment variables
  */
 @Service
 public class JwtService {
     
-    private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private final SecretKey SECRET_KEY;
     private static final long EXPIRATION_TIME = 86400000; // 24 hours
+    
+    public JwtService(@Value("${jwt.secret:ThisIsADefaultSecretKeyForDevelopmentOnlyPleaseChangeInProduction}") String secret) {
+        // Use provided secret or generate one for development
+        if (secret.length() < 32) {
+            secret = "ThisIsADefaultSecretKeyForDevelopmentOnlyPleaseChangeInProduction";
+        }
+        this.SECRET_KEY = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    }
     
     /**
      * Generates JWT token for authenticated user
