@@ -38,7 +38,7 @@ public class AuthService {
     public AuthResponse register(RegisterRequest request) {
         // Check if username already exists
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Registration failed");
+            throw new RuntimeException("Username already exists. Please choose a different username.");
         }
         
         // Hash login password with BCrypt

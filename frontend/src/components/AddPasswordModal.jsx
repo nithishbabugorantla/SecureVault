@@ -1,31 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 
-function AddPasswordModal({ isOpen, onClose, onSubmit }) {
+const AddPasswordModal = memo(function AddPasswordModal({ isOpen, onClose, onSubmit }) {
   const [appName, setAppName] = useState('');
   const [appUsername, setAppUsername] = useState('');
   const [password, setPassword] = useState('');
   const [masterPassword, setMasterPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const resetForm = useCallback(() => {
+    setAppName('');
+    setAppUsername('');
+    setPassword('');
+    setMasterPassword('');
+  }, []);
+
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     setLoading(true);
     await onSubmit(appName, appUsername, password, masterPassword);
     setLoading(false);
-    // Reset form
-    setAppName('');
-    setAppUsername('');
-    setPassword('');
-    setMasterPassword('');
-  };
+    resetForm();
+  }, [appName, appUsername, password, masterPassword, onSubmit, resetForm]);
 
-  const handleClose = () => {
-    setAppName('');
-    setAppUsername('');
-    setPassword('');
-    setMasterPassword('');
+  const handleClose = useCallback(() => {
+    resetForm();
     onClose();
-  };
+  }, [resetForm, onClose]);
 
   if (!isOpen) return null;
 
@@ -114,6 +114,6 @@ function AddPasswordModal({ isOpen, onClose, onSubmit }) {
       </div>
     </div>
   );
-}
+});
 
 export default AddPasswordModal;

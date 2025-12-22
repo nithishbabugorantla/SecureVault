@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 
-function ShowPasswordModal({ isOpen, onClose, onSubmit, decryptedPassword }) {
+const ShowPasswordModal = memo(function ShowPasswordModal({ isOpen, onClose, onSubmit, decryptedPassword }) {
   const [masterPassword, setMasterPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [showDecrypted, setShowDecrypted] = useState(false);
@@ -15,20 +15,20 @@ function ShowPasswordModal({ isOpen, onClose, onSubmit, decryptedPassword }) {
       }, 30000);
       return () => clearTimeout(timer);
     }
-  }, [decryptedPassword]); // onClose is stable, no need in deps
+  }, [decryptedPassword, onClose]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     setLoading(true);
     await onSubmit(masterPassword);
     setLoading(false);
-  };
+  }, [masterPassword, onSubmit]);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setMasterPassword('');
     setShowDecrypted(false);
     onClose();
-  };
+  }, [onClose]);
 
   if (!isOpen) return null;
 
@@ -97,6 +97,6 @@ function ShowPasswordModal({ isOpen, onClose, onSubmit, decryptedPassword }) {
       </div>
     </div>
   );
-}
+});
 
 export default ShowPasswordModal;

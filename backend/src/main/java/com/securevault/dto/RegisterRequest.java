@@ -1,6 +1,7 @@
 package com.securevault.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -12,9 +13,17 @@ public class RegisterRequest {
     
     @NotBlank(message = "Login password is required")
     @Size(min = 8, max = 128, message = "Login password must be at least 8 characters")
+    @Pattern(
+        regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).*$",
+        message = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+    )
     private String loginPassword;
     
     @NotBlank(message = "Master password is required")
     @Size(min = 8, max = 128, message = "Master password must be at least 8 characters")
+    @Pattern(
+        regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).*$",
+        message = "Master password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+    )
     private String masterPassword;
 }
