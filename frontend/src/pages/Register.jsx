@@ -11,13 +11,14 @@ function Register() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Password validation rules
+  // Password validation rules - matches backend validation
   const validatePassword = (password) => {
     return {
       minLength: password.length >= 8,
       hasUpperCase: /[A-Z]/.test(password),
       hasLowerCase: /[a-z]/.test(password),
       hasNumber: /\d/.test(password),
+      // Matches backend regex pattern exactly
       hasSpecialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
     };
   };
@@ -30,6 +31,7 @@ function Register() {
   const isLoginPasswordValid = Object.values(loginPasswordValidation).every(Boolean);
   const isMasterPasswordValid = Object.values(masterPasswordValidation).every(Boolean);
   const passwordsMatch = masterPassword && confirmMasterPassword && masterPassword === confirmMasterPassword;
+  const isFormValid = isLoginPasswordValid && isMasterPasswordValid && passwordsMatch && username.length >= 3;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -187,7 +189,7 @@ function Register() {
 
           <button
             type="submit"
-            disabled={loading || !isLoginPasswordValid || !isMasterPasswordValid || !passwordsMatch}
+            disabled={loading || !isFormValid}
             className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
           >
             {loading ? 'Registering...' : 'Register'}

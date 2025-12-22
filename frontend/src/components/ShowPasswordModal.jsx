@@ -15,7 +15,9 @@ const ShowPasswordModal = memo(function ShowPasswordModal({ isOpen, onClose, onS
       }, 30000);
       return () => clearTimeout(timer);
     }
-  }, [decryptedPassword, onClose]);
+    // onClose is intentionally omitted from deps as it should be stable
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [decryptedPassword]);
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();

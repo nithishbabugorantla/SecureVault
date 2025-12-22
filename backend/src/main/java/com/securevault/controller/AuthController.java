@@ -7,12 +7,8 @@ import com.securevault.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * AuthController - Handles authentication endpoints
@@ -63,15 +59,16 @@ public class AuthController {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
+        // Collect all validation errors
+        StringBuilder errorMessage = new StringBuilder();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
+            String message = error.getDefaultMessage();
+            if (errorMessage.length() > 0) {
+                errorMessage.append(". ");
+            }
+            errorMessage.append(message);
         });
         
-        // Return the first error message for simplicity
-        String firstError = errors.values().iterator().next();
-        return ResponseEntity.badRequest().body(firstError);
+        return ResponseEntity.badRequest().body(errorMessage.toString());
     }
 }
