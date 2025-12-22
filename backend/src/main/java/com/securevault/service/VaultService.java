@@ -53,19 +53,19 @@ public class VaultService {
     
     /**
      * Adds a new password entry
-     * Encrypts password using master password before storage
+     * Encrypts password using master PIN before storage
      */
     public PasswordEntryResponse addPassword(Long userId, AddPasswordRequest request) {
         try {
-            // Verify master password
-            if (!authService.verifyMasterPassword(userId, request.getMasterPassword())) {
-                throw new RuntimeException("Invalid master password");
+            // Verify master PIN
+            if (!authService.verifyMasterPin(userId, request.getMasterPin())) {
+                throw new RuntimeException("Invalid master PIN");
             }
             
-            // Encrypt password using AES-256 with key derived from master password
+            // Encrypt password using AES-256 with key derived from master PIN
             String encryptedPassword = cryptoService.encrypt(
                     request.getPassword(), 
-                    request.getMasterPassword()
+                    request.getMasterPin()
             );
             
             // Create and save password entry
@@ -89,23 +89,23 @@ public class VaultService {
     
     /**
      * Shows (decrypts) a password entry
-     * CRITICAL: Only decrypts after master password verification
+     * CRITICAL: Only decrypts after master PIN verification
      */
-    public DecryptedPasswordResponse showPassword(Long userId, Long entryId, String masterPassword) {
+    public DecryptedPasswordResponse showPassword(Long userId, Long entryId, String masterPin) {
         try {
             // Verify user ownership
             PasswordEntry entry = passwordRepository.findByIdAndUserId(entryId, userId)
                     .orElseThrow(() -> new RuntimeException("Password entry not found"));
             
-            // CRITICAL: Verify master password before decryption
-            if (!authService.verifyMasterPassword(userId, masterPassword)) {
-                throw new RuntimeException("Invalid master password");
+            // CRITICAL: Verify master PIN before decryption
+            if (!authService.verifyMasterPin(userId, masterPin)) {
+                throw new RuntimeException("Invalid master PIN");
             }
             
-            // Decrypt password using master password
+            // Decrypt password using master PIN
             String decryptedPassword = cryptoService.decrypt(
                     entry.getEncryptedPassword(),
-                    masterPassword
+                    masterPin
             );
             
             return new DecryptedPasswordResponse(decryptedPassword);

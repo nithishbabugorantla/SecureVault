@@ -14,10 +14,10 @@ import org.springframework.stereotype.Service;
  * 
  * SECURITY LOGIC:
  * 1. Login password is hashed with BCrypt for authentication
- * 2. Master password is hashed with BCrypt for authorization (separate from login)
+ * 2. Master PIN (4 digits) is hashed with BCrypt for authorization (separate from login)
  * 3. JWT token is generated upon successful login
- * 4. Master password is NEVER stored in plaintext
- * 5. Master password hash is used only for verification, not for encryption
+ * 4. Master PIN is NEVER stored in plaintext
+ * 5. Master PIN hash is used only for verification, not for encryption
  */
 @Service
 public class AuthService {
@@ -33,7 +33,7 @@ public class AuthService {
     
     /**
      * Registers a new user
-     * Hashes both login password and master password using BCrypt
+     * Hashes both login password and master PIN using BCrypt
      */
     public AuthResponse register(RegisterRequest request) {
         // Check if username already exists
@@ -44,14 +44,14 @@ public class AuthService {
         // Hash login password with BCrypt
         String loginPasswordHash = passwordEncoder.encode(request.getLoginPassword());
         
-        // Hash master password with BCrypt (separate from login password)
-        String masterPasswordHash = passwordEncoder.encode(request.getMasterPassword());
+        // Hash master PIN with BCrypt (separate from login password)
+        String masterPinHash = passwordEncoder.encode(request.getMasterPin());
         
         // Create and save user
         User user = new User();
         user.setUsername(request.getUsername());
         user.setLoginPasswordHash(loginPasswordHash);
-        user.setMasterPasswordHash(masterPasswordHash);
+        user.setMasterPinHash(masterPinHash);
         user = userRepository.save(user);
         
         // Generate JWT token
@@ -81,14 +81,14 @@ public class AuthService {
     }
     
     /**
-     * Verifies master password
+     * Verifies master PIN
      * Used before decrypting passwords
      */
-    public boolean verifyMasterPassword(Long userId, String masterPassword) {
+    public boolean verifyMasterPin(Long userId, String masterPin) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
-        // Verify master password hash using BCrypt
-        return passwordEncoder.matches(masterPassword, user.getMasterPasswordHash());
+        // Verify master PIN hash using BCrypt
+        return passwordEncoder.matches(masterPin, user.getMasterPinHash());
     }
 }

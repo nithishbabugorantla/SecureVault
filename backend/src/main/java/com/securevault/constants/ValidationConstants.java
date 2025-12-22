@@ -9,7 +9,7 @@ package com.securevault.constants;
 public class ValidationConstants {
     
     /**
-     * Password validation pattern
+     * Password validation pattern (for login password only)
      * Requirements:
      * - At least one lowercase letter [a-z]
      * - At least one uppercase letter [A-Z]
@@ -21,10 +21,23 @@ public class ValidationConstants {
         "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).*$";
     
     /**
+     * PIN validation pattern (for master PIN)
+     * Requirements:
+     * - Exactly 4 digits [0-9]
+     */
+    public static final String PIN_PATTERN = "^\\d{4}$";
+    
+    /**
      * Password validation error message
      */
     public static final String PASSWORD_VALIDATION_MESSAGE = 
         "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character";
+    
+    /**
+     * PIN validation error message
+     */
+    public static final String PIN_VALIDATION_MESSAGE = 
+        "PIN must be exactly 4 digits";
     
     /**
      * Minimum password length
@@ -35,6 +48,11 @@ public class ValidationConstants {
      * Maximum password length
      */
     public static final int PASSWORD_MAX_LENGTH = 128;
+    
+    /**
+     * PIN length (exactly 4 digits)
+     */
+    public static final int PIN_LENGTH = 4;
     
     /**
      * Minimum username length

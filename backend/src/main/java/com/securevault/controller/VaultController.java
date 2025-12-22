@@ -65,7 +65,7 @@ public class VaultController {
             @Valid @RequestBody ShowPasswordRequest request) {
         try {
             DecryptedPasswordResponse response = vaultService.showPassword(
-                    userId, id, request.getMasterPassword());
+                    userId, id, request.getMasterPin());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Failed to decrypt password");

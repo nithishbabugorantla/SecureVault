@@ -9,11 +9,11 @@ class AuthService {
     this.username = null;
   }
 
-  async register(username, loginPassword, masterPassword) {
+  async register(username, loginPassword, masterPin) {
     const response = await axios.post(`${API_URL}/auth/register`, {
       username,
       loginPassword,
-      masterPassword
+      masterPin
     });
     
     if (response.data.token) {

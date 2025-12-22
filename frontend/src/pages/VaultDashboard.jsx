@@ -48,9 +48,9 @@ function VaultDashboard() {
     setShowPasswordModal(true);
   }, []);
 
-  const handleDecryptPassword = useCallback(async (masterPassword) => {
+  const handleDecryptPassword = useCallback(async (masterPin) => {
     try {
-      const response = await vaultService.showPassword(selectedPasswordId, masterPassword);
+      const response = await vaultService.showPassword(selectedPasswordId, masterPin);
       setDecryptedPassword(response.password);
     } catch (err) {
       alert(err.response?.data || 'Failed to decrypt password');
@@ -58,9 +58,9 @@ function VaultDashboard() {
     }
   }, [selectedPasswordId]);
 
-  const handleAddPassword = useCallback(async (appName, appUsername, password, masterPassword) => {
+  const handleAddPassword = useCallback(async (appName, appUsername, password, masterPin) => {
     try {
-      await vaultService.addPassword(appName, appUsername, password, masterPassword);
+      await vaultService.addPassword(appName, appUsername, password, masterPin);
       setAddPasswordModal(false);
       loadPasswords();
     } catch (err) {

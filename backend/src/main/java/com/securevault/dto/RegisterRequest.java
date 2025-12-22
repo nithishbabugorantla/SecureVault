@@ -23,11 +23,8 @@ public class RegisterRequest {
              message = ValidationConstants.PASSWORD_VALIDATION_MESSAGE)
     private String loginPassword;
     
-    @NotBlank(message = "Master password is required")
-    @Size(min = ValidationConstants.PASSWORD_MIN_LENGTH, 
-          max = ValidationConstants.PASSWORD_MAX_LENGTH, 
-          message = "Master password must be at least " + ValidationConstants.PASSWORD_MIN_LENGTH + " characters")
-    @Pattern(regexp = ValidationConstants.PASSWORD_PATTERN,
-             message = ValidationConstants.PASSWORD_VALIDATION_MESSAGE)
-    private String masterPassword;
+    @NotBlank(message = "Master PIN is required")
+    @Pattern(regexp = ValidationConstants.PIN_PATTERN,
+             message = ValidationConstants.PIN_VALIDATION_MESSAGE)
+    private String masterPin;
 }

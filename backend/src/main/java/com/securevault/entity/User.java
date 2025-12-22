@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  * User Entity
  * Stores user authentication credentials
  * - loginPasswordHash: BCrypt hash of login password (for authentication)
- * - masterPasswordHash: BCrypt hash of master password (for vault decryption authorization)
+ * - masterPinHash: BCrypt hash of 4-digit PIN (for vault decryption authorization)
  */
 @Entity
 @Table(name = "users")
@@ -30,7 +30,7 @@ public class User {
     private String loginPasswordHash;
     
     @Column(nullable = false)
-    private String masterPasswordHash;
+    private String masterPinHash;
     
     @Column(nullable = false)
     private LocalDateTime createdAt;
