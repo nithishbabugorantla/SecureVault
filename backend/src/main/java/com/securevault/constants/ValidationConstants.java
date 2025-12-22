@@ -16,6 +16,15 @@ public class ValidationConstants {
      * - At least one digit [0-9]
      * - At least one special character from the set: !@#$%^&*()_+-=[]{};':"\\|,.<>/?
      * - Minimum length is enforced separately via @Size annotation
+     * 
+     * Regex breakdown:
+     * ^                      - Start of string
+     * (?=.*[a-z])           - Positive lookahead: must contain at least one lowercase letter
+     * (?=.*[A-Z])           - Positive lookahead: must contain at least one uppercase letter
+     * (?=.*\\d)             - Positive lookahead: must contain at least one digit
+     * (?=.*[!@#$...])       - Positive lookahead: must contain at least one special character
+     * .*                     - Match any characters
+     * $                      - End of string
      */
     public static final String PASSWORD_PATTERN = 
         "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).*$";
