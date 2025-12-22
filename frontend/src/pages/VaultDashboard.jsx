@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
 import vaultService from '../services/vaultService';
@@ -16,15 +16,8 @@ function VaultDashboard() {
   const [decryptedPassword, setDecryptedPassword] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!authService.isAuthenticated()) {
-      navigate('/login');
-      return;
-    }
-    loadPasswords();
-  }, [navigate]);
-
-  const loadPasswords = async () => {
+  // Memoize loadPasswords to prevent recreation on every render
+  const loadPasswords = useCallback(async () => {
     try {
       setLoading(true);
       const data = await vaultService.getAllPasswords();
@@ -38,35 +31,44 @@ function VaultDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [navigate]);
 
-  const handleShowPassword = (id) => {
+  useEffect(() => {
+    if (!authService.isAuthenticated()) {
+      navigate('/login');
+      return;
+    }
+    loadPasswords();
+  }, [navigate, loadPasswords]);
+
+  // Memoize callback functions to prevent unnecessary re-renders of child components
+  const handleShowPassword = useCallback((id) => {
     setSelectedPasswordId(id);
     setDecryptedPassword('');
     setShowPasswordModal(true);
-  };
+  }, []);
 
-  const handleDecryptPassword = async (masterPassword) => {
+  const handleDecryptPassword = useCallback(async (masterPin) => {
     try {
-      const response = await vaultService.showPassword(selectedPasswordId, masterPassword);
+      const response = await vaultService.showPassword(selectedPasswordId, masterPin);
       setDecryptedPassword(response.password);
     } catch (err) {
       alert(err.response?.data || 'Failed to decrypt password');
       setShowPasswordModal(false);
     }
-  };
+  }, [selectedPasswordId]);
 
-  const handleAddPassword = async (appName, appUsername, password, masterPassword) => {
+  const handleAddPassword = useCallback(async (appName, appUsername, password, masterPin) => {
     try {
-      await vaultService.addPassword(appName, appUsername, password, masterPassword);
+      await vaultService.addPassword(appName, appUsername, password, masterPin);
       setAddPasswordModal(false);
       loadPasswords();
     } catch (err) {
       alert(err.response?.data || 'Failed to add password');
     }
-  };
+  }, [loadPasswords]);
 
-  const handleDeletePassword = async (id) => {
+  const handleDeletePassword = useCallback(async (id) => {
     if (window.confirm('Are you sure you want to delete this password?')) {
       try {
         await vaultService.deletePassword(id);
@@ -75,12 +77,17 @@ function VaultDashboard() {
         alert('Failed to delete password');
       }
     }
-  };
+  }, [loadPasswords]);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     authService.logout();
     navigate('/login');
-  };
+  }, [navigate]);
+
+  const handleCloseShowPasswordModal = useCallback(() => {
+    setShowPasswordModal(false);
+    setDecryptedPassword('');
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -149,10 +156,7 @@ function VaultDashboard() {
       {/* Modals */}
       <ShowPasswordModal
         isOpen={showPasswordModal}
-        onClose={() => {
-          setShowPasswordModal(false);
-          setDecryptedPassword('');
-        }}
+        onClose={handleCloseShowPasswordModal}
         onSubmit={handleDecryptPassword}
         decryptedPassword={decryptedPassword}
       />

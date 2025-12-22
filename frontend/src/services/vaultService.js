@@ -17,21 +17,21 @@ class VaultService {
     return response.data;
   }
 
-  async addPassword(appName, appUsername, password, masterPassword) {
+  async addPassword(appName, appUsername, password, masterPin) {
     const response = await axios.post(`${API_URL}/vault/add`, {
       appName,
       appUsername,
       password,
-      masterPassword
+      masterPin
     }, {
       headers: this.getAuthHeaders()
     });
     return response.data;
   }
 
-  async showPassword(id, masterPassword) {
+  async showPassword(id, masterPin) {
     const response = await axios.post(`${API_URL}/vault/show/${id}`, {
-      masterPassword
+      masterPin
     }, {
       headers: this.getAuthHeaders()
     });

@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { memo } from 'react';
 
-function PasswordCard({ entry, onShow, onDelete }) {
+const PasswordCard = memo(function PasswordCard({ entry, onShow, onDelete }) {
   return (
     <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
       <div className="flex justify-between items-start mb-2">
@@ -29,6 +29,6 @@ function PasswordCard({ entry, onShow, onDelete }) {
       </div>
     </div>
   );
-}
+});
 
 export default PasswordCard;

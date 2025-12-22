@@ -26,3 +26,6 @@ yarn-error.log*
 # Environment
 .env
 .env.local
+
+# Screenshots and test artifacts
+screenshots/
